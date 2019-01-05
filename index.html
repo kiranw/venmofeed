@@ -1,0 +1,553 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CS171 - Lab 8</title>
+
+  <!-- Load Google Font -->
+  <link href='https://fonts.googleapis.com/css?family=Roboto:100,400,300,400italic,700' rel='stylesheet' type='text/css'>
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,500,600,700,900|Montserrat" rel="stylesheet">
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/style.css">
+
+
+</head>
+<body>
+  <div data-spy="affix" id="dot-nav">
+    <ul>
+      <li class="awesome-tooltip active" title="Top"><a href="#section1"></a></li>
+      <li class="awesome-tooltip" title="Data"><a href="#section2"></a></li>
+      <li class="awesome-tooltip" title="Public Data"><a href="#section3"></a></li>
+      <li class="awesome-tooltip" title="Individual Data"><a href="#section4"></a></li>
+      <li class="awesome-tooltip" title="Network Data"><a href="#section5"></a></li>
+      <li class="awesome-tooltip" title="More Data Analysis"><a href="#section8"></a></li>
+      <li class="awesome-tooltip" title="Venmo and Privacy"><a href="#section6"></a></li>
+      <li class="awesome-tooltip" title="Dialectical"><a href="#section7"></a></li>
+    </ul>
+  </div>
+
+
+  <!--<div class="container-fluid">-->
+    <div id="navbar" id="section1">
+      <div class="col-md-12">
+        <img src="img/logo.png" id="logo"/>
+      </div>
+    </div>
+
+  <div class="section">
+    <div class="section-content">
+      <div class="section-header2" style="color: red">*  I need to do a lot of cleaning before making this a publicly facing project, please do not share this. Though the data is public, I'd prefer not having it as exposed as it is in its current state  *</div><br><br>
+      <div class="section-header">What is Venmo, and why does it matter?</div>
+      <div class="section-text">
+        <p>Venmo is a payment service platform that allows users to transfer money -
+          Venmo offers a convenient way of sending money online, instantly, and is
+          widely used in casual and commercial settings to manage payments.
+          While the platform does offer conveniences to users, it also brings to bear
+          questions on what our transactions may reveal about us. When a user submits a
+          transaction, it must contain a monetary value, a desciption, a target
+          account holder, and the option to either request or pay the target account.</p>
+      </div>
+      <div class="section-header-small">About This Project</div>
+      <div class="section-text">
+        <p>Venmo is not only a transaction platform, but also a social media platform. On its web app,
+          one can easily scroll through a vibrant public feed of information, with quirky payments. However,
+          these payments and patterns in these payments are extremely rich and can offer the potential to
+          make inferences on one's relationships, living situations, and location. Because Venmo payments are often
+          descriptive, and by default, public, it is easy to make assumptions about who one might interact with and
+          at what frequency, barring the text in the payment descriptions themselves. However, an analysis on this
+          field is even more revealing. In this project, I'm performing a shallow dive on some kinds of inferences
+          that can be made from payment data, without the application of Natural Language Processing or any advanced
+          algorithms. Even with simple filters, one can still synthesize patterns on a time and social dimension to
+          reconstruct social networks on a platform that intuitively does not feel like one to its users.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="section2">
+    <div class="section-content">
+      <div class="section-header">Venmo Data</div>
+      <div class="section-text">
+        <p>Venmo data has varying degrees of granularity, on a temporal and social scale. Recent Venmo payment's
+        timestamps include a specific hour, minute and second while older payments do not. In my study
+        , for collected public feed transactions, each entry is labeled with an %H:%M:%S since it was collected in real time.
+          In my other network analyses, this data is no longer accessible. Instead, transactions are displayed with dates
+          (%m/%d/%Y). Additionally, payments have an actor (the source of the activity), a target, a transaction type
+          (pay or charge), and a description of the transaction based on user input. Finally, if you are the source or
+          target of a transaction, you can see the monetary value. If not, regardless of the privacy settings the user has
+          selected, that monetary value is not visible to others.</p>
+      </div>
+      <div id="sample-feed">
+        <table class="table table-striped" id="public-feed">
+          <thead class="thead-dark">
+          <tr>
+            <th scope="col">Time</th>
+            <th scope="col">Actor</th>
+            <th scope="col">Target</th>
+            <th scope="col">Description</th>
+            <th scope="col">Type</th>
+          </tr>
+          </thead>
+          <tbody id="ticker-body">
+          <tr id="ticker-row">
+            <td scope="row">2017-12-07T18:09:51Z</td>
+            <td scope="row"><img class="sample-img" src="https://venmopics.appspot.com/u/v3/m/9e191a86-e829-4cca-9f4b-fdf6f7d8a77b" />Tara Kavanaugh</td>
+            <td><img class="sample-img" src="https://venmopics.appspot.com/u/v1/m/dee345b1-b3c7-45d8-b93f-6123f771524e" />Chelsea Mackay</td>
+            <td>💦🔌🔥</td>
+            <td>payment</td>
+          </tr>
+          <!--<tr>-->
+            <!--<td scope="row">2017-12-07T18:14:08Z</td>-->
+            <!--<td scope="row"><img class="sample-img" src="https://venmopics.appspot.com/u/v1/m/79bada51-a895-4e94-b5a4-bcc273bab8fb" />Mallory Sico</td>-->
+            <!--<td><img class="sample-img" src="https://venmopics.appspot.com/u/v2/n/ce0a19dc-7fbf-4e8b-b55e-070f3ea0a7e6" />Madeline Jasper</td>-->
+            <!--<td>Bus- Krakow to Budapest</td>-->
+            <!--<td>charge</td>-->
+          <!--</tr>-->
+          <!--<tr>-->
+            <!--<td scope="row">2017-12-07T18:14:50Z</td>-->
+            <!--<td scope="row"><img class="sample-img" src="https://venmopics.appspot.com/u/v2/m/07ff1c03-4ca5-4342-a46b-59b97f139adc" />Cedrice Webber</td>-->
+            <!--<td><img class="sample-img" src="https://venmopics.appspot.com/u/v2/m/27a7f6c7-f48f-42b5-be18-e62088515aae" />Sarah Knapp</td>-->
+            <!--<td>December 2017 Rent</td>-->
+            <!--<td>payment</td>-->
+          <!--</tr>-->
+          <!--<tr>-->
+            <!--<td scope="row">2017-12-07T18:14:50Z</td>-->
+            <!--<td scope="row"><img class="sample-img" src="https://venmopics.appspot.com/u/v2/m/0dcca12c-07b6-4ad3-a17b-6a7f3ce1f791" />Timmy Mahaney</td>-->
+            <!--<td><img class="sample-img" src="https://s3.amazonaws.com/venmo/no-image.gif" />Matt Brock</td>-->
+            <!--<td>Losing fantasy 🏈</td>-->
+            <!--<td>payment</td>-->
+          <!--</tr>-->
+          <!--<tr>-->
+            <!--<td scope="row">2017-12-07T18:15:52Z</td>-->
+            <!--<td scope="row"><img class="sample-img" src="https://venmopics.appspot.com/u/v1/m/dac1e43b-afad-497d-a24e-db3f9c95085e" />Christa Roeh</td>-->
+            <!--<td><img class="sample-img" src="https://venmopics.appspot.com/u/v1/m/492168f0-e13e-4b14-b20a-10575a101e8c" />Anna Joy Buegel</td>-->
+            <!--<td>Babysitting :) thank you!</td>-->
+            <!--<td>payment</td>-->
+          <!--</tr>-->
+          </tbody>
+        </table>
+      </div>
+      <div class="section-text">
+        <p>It is concretely worth noting that Venmo data is self-reported, and therefore not necessarily honest or accurate.
+          Many times, people report descriptions that are irrelevant to the payments attached. However, I have seen that
+          some payments are auto-generated through bill-splitting apps like Splitwise, that have default payment messages
+          (like "For bills on splitwise.com") that are more immune to this kind of inaccuracy. ____% of payments on Splitwise
+        are for rent, utilities and internet payment management between shared homes, between the age groups of ____ - ____. </p>
+        <p>
+          While there are valuable bits of information that can be inferred from this data, it is worth exercising caution
+          on treating the results of this kind of analysis as any more than inference. This project is an exercise in seeing how
+          revealing this data could be, as a reminder to all that data in aggregate is much more powerful than the sum of its parts.
+          When pooling together a transaction history, and exploring the vast networks available on Venmo, combined with its
+          default public settings, there is potential to expose information that was no intended to be shown on this platform.
+        </p>
+      </div>
+      <div class="section-header-small">Getting Data</div>
+      <div class="section-text">
+        <p>I set up a quick ruby script that scrapes data from Venmo's public API endpoint - you can see that endpoint for yourself
+          here: <br>
+          <code><a href="https://venmo.com/api/v5/public">https://venmo.com/api/v5/public</a></code>
+          You can see that implemented in my
+        Github repository if you're interested in deeper reading. Because many payments are generated constantly, I was able to amass
+        over 5,000 rows of information in the course of 5 minutes. For the scope of this project, I cut that down to a small sample of
+        approximately ~2000 to minimize visualization load time. I also built scrapers to generate datasets of the transactions of different individuals
+        to complete my other analyses later on in this document. Those scrapers restricted their search from now (December) to
+          data within 2017. I have not included those scripts in my repository - Venmo does not make this information accessible through a public
+        API yet, so if this is released, it should be as a tool that is restricted to aggregating only your own data for analysis and visualization.</p>
+    </div>
+  </div>
+</div>
+
+<div class="section" id="section3">
+  <div class="section-content">
+    <div class="section-header">What does public data look like?</div>
+    <div class="section-text">
+      Public Venmo data is a massive, constantly updating and rich corpus of data.
+      Public feed data is difficult to construct networks from alone because it is
+      difficult to assemble links between the payments that appear in real time. Because
+      of this, my analysis on public data focuses primarily on identifying the ways in which
+      people label their transactions. These simple patterns, barring the use of NLP, can make
+      a lot of progress, alone, in understanding what different Venmo transactions are for.
+
+      Even at a cursory glance, there is potential to reconstruct fantasy football leagues, housing groups,
+      close friend networks, attendees at birthday parties and other events (ie. large groups at restaurants), and
+      travel groups. Here are some examples of patterns people naturally follow:
+      <br>
+      <code>Uber from ___ to ___</code>
+      <code>Fantasy</code>
+      <code>&lt;month&gt; Rent</code>
+      <code>for &lt;person&gt;'s birthday present</code>
+      <code>For bills on Splitwise.com</code>
+      Other payment management apps like Splitwise and Mint also influence these patterns - either generating descriptions
+      from default templates (for things like rent, utilities, etc. on Splitwise) or by encouraging users to follow
+      legible formatting patterns for auto-classifying payments for personal expense tracking (Mint). Mint one example of many
+      spending managers that work best when people label transactions with easy-to-classify descriptions. With more abstract
+      Venmo descriptions like unrelated emojis or intentionally misspelled words, Venmo transactions do not classify
+      cleanly, and prevent these services from aggregating and classifying food vs housing-related vs other kinds of expenses one
+      might want to see binned.
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="section-header-small">A Quick Overview of Public Data</div>
+        <div class="section-text">
+        Here's a table with the raw data I collected in span of around 5 minutes - this is here to demonstrate the sheer
+          volume of information available in short periods of time, and the diversity of use cases the transactions
+          fulfill on the platform.
+        </div>
+      </div>
+      <div id="live-feed">
+        <table class="table table-striped">
+          <thead class="thead-dark">
+            <tr>
+              <th scope="col">Time</th>
+              <th scope="col">Actor</th>
+              <th scope="col"></th>
+              <th scope="col">Target</th>
+              <th scope="col">Description</th>
+            </tr>
+          </thead>
+          <tbody id="table-feed"></tbody>
+        </table>
+      </div>
+      <div class="section-text">
+        From this data, I used a few simple filters to separate the transactions into different basic categories. <br>
+        <strong>Hover over the circles</strong> to see the specific transaction information. These are arranged across a time axis (x-axis).
+      </div>
+      <div id="global-data"></div>
+      <div class="section-header-small">Weak Filters at a Glance</div>
+      <div class="section-text">
+        Even with this weak filtering implemented, we can separate the transactions pretty well. Some definitely slip through since this method
+        is not the most robust to classify payments, but getting results is extremely feasible. While these filters alone work extremely well,
+        there is a lot of potential on other modes of analysis that can yield even better clustering.
+      </div>
+      <br>
+      <br>
+
+      <div id="bubble-data"></div>
+    </div>
+  </div>
+</div>
+
+
+  <div class="section" id="section4">
+    <div class="section-content">
+      <div class="section-header">What does an individual's data look like?</div>
+      <div class="section-text">
+        The left shows a sankey diagram of payments to, and charges from each individual at the center of focus. These individuals have public
+        settings on Venmo and these transaction histories included trace back from the beginning of 2017.<br><br>
+
+        When you <strong> hover over a node (colored block)</strong> in the sankey diagram,
+        the transactions between that person and the main case study's individual display on the right side. In the right panel,
+        <strong>each dot represents a transaction.</strong><br><br>The vertical axis is time (top is most recent).
+        <strong>Red dots</strong>  are transactions that were marked by the <strong>weak filtering</strong> that indicated a roommate/housemate relationship. <br>
+        <strong>Green dots</strong> are other payments that occurred between indivudals identified to live together, that we not necessarily related to housing or the filtering. <strong>Mouseover</strong> on
+        the transactions to see their details.
+        <br><br>
+        It is worth noting that you can actually see changes over time in living situations, since some transactions
+        only occured in specific periods of time and stopped showing on others. For some people, the recurring payments occur at a regular schedule and often
+        with the same descriptions.
+      </div>
+      <br>
+      <br>
+      <br>
+      <div class="section-text">
+        <div class="row">
+          <div class="section-header-small">Case 1: Mint User</div>
+          Based on Vishva's data, with weak filtering, we can infer that he currently lives with: <br>
+          <code1>Neil Shah</code1><code1>Roba Adnew</code1><br>
+          He used to live with:<br>
+          <code2>Ellina Cho</code2><br>
+          Other weak matches:<br>
+          <code3>Nisha Chikhale</code3><br>
+          <br>
+          <br><br>
+          <div class="col-md-9">
+            <div id="vishva-mehta" class="individual-sankey"></div>
+          </div>
+          <div class="col-md-3" id="individual-transactions-vishva-mehta" class="individual-transactions">
+          </div>
+        </div>
+        <div class="row">
+          <div class="section-header-small">Case 2: Mint User</div>
+          Based on Christina's data, with weak filtering, we can infer that she currently lives with: <br>
+          <code1>Niki Tubacki</code1><code1>Kiran Wattamwar</code1><code1>Sarah Wright</code1><br>
+          She travelled with:<br>
+          <code2>Bryan Cai</code2><code2>Yasyf Mohamedali</code2><code2>Parshwa Khambhati</code2><br>
+          Other weak matches:<br>
+          <code3>Katherine Ho</code3>
+          <br><br><br>
+          <div class="col-md-9">
+            <div id="christina-sun" class="individual-sankey"></div>
+          </div>
+          <div class="col-md-3" id="individual-transactions-christina-sun" class="individual-transactions">
+          </div>
+        </div>
+        <div class="row">
+          <div class="section-header-small">Case 3: Misc. User</div>
+          Based on Niki's data, with weak filtering, we can infer that she currently lives with: <br>
+          <code1>Christina Sun</code1><code1>Kiran Wattamwar</code1><code1>Sarah Wright</code1><br>
+          Other weak matches:<br>
+          <code3>Yasyf Mohamedali</code3><code3>Erica Green</code3><br>
+          <br><br><br>
+          <div class="col-md-9">
+            <div id="niki-tubacki" class="individual-sankey"></div>
+          </div>
+          <div class="col-md-3" id="individual-transactions-niki-tubacki" class="individual-transactions">
+          </div>
+        </div>
+        <div class="row">
+          <div class="section-header-small">Case 4: Misc. User</div>
+          Based on Valerie's data, with weak filtering, we can infer that she currently lives with: <br>
+          <code1>Niki Tubacki</code1><code1>Kiran Wattamwar</code1>
+          <br><br><br>
+          <div class="col-md-9">
+            <div id="valerie-peng" class="individual-sankey"></div>
+          </div>
+          <div class="col-md-3" id="individual-transactions-valerie-peng" class="individual-transactions">
+          </div>
+        </div>
+        <div class="row">
+          <div class="section-header-small">Case 5: Splitwise User</div>
+          Based on Sarah's data, with weak filtering, we can infer that she currently lives with: <br>
+          <code1>Christina Sun</code1><code1>Kiran Wattamwar</code1><code1>Niki Tubacki</code1><br>
+          She used to live with:<br>
+          <code2>Amanda Figueroa</code2>
+          <br><br><br>
+          <div class="col-md-9">
+            <div id="sarah-wright" class="individual-sankey"></div>
+          </div>
+          <div class="col-md-3" id="individual-transactions-sarah-wright" class="individual-transactions">
+          </div>
+        </div>
+        <div class="row">
+          <div class="section-header-small">Case 6: Transitioned Between Apartments</div>
+          Based on Lynn's data, with weak filtering, we can infer that she currently lives with: <br>
+          <code1>Tara Lee</code1><code1>E Young</code1><br>
+          She used to live with:<br>
+          <code2>Hannah Levy</code2><code2>Jessica Li</code2><code2>Alexandra Ivanov</code2>
+          <br><br><br>
+          <div class="col-md-9">
+            <div id="lynn-takeshita" class="individual-sankey"></div>
+          </div>
+          <div class="col-md-3" id="individual-transactions-lynn-takeshita" class="individual-transactions">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="section" id="section5">
+    <div class="section-content">
+      <div class="section-header">Crafting Networks</div>
+      <div class="section-text">
+        This analysis method works best, as mentioned before, on an individual's level. However, when an entity decides to explore
+        an individual's transactions, they might find it valuable to connect the dots between other people they see on their
+        Venmo feeds to construct a better image of the network. Here's a quick example of a network graph and how we can connect
+        the dots to reconstruct my own apartment's occupants.<br><br>
+        By pruning the conclusions we made in the last step to only keeping nodes associated by shared housing if there are at least
+        two connections to other people in the same graph, we can actually get a remarkably accurate reconstruction of 3 apartments here.
+        For the case of two of those, we actually only have the data of one individual in that network and that is enough for total
+        reconstruction. For the other larger network, it takes at least 3 individual's data aggregated to form the same conclusion with
+        robustness. Despite not having my own account feed included, I can still construct my own relationships reliably. In practice,
+        since my transactions are private to me and the individual I send a payment to, a third party would not be able to achieve the
+        same results, however, if my settings were more open, one would not need to search for information about me to be able to still
+        make inferences.<br><br>
+        <div id="network-graph"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="section8">
+    <div class="section-content">
+      <div class="section-header">More Data Analysis</div>
+      <div class="section-text">
+      There are many more advanced methods that can be applied to this data to generate more robust results. Twitter data has already
+        laid a strong groundwork for this kind of content - parsing the potential meanings and associations of emojis is already
+        <a href="https://deepmoji.mit.edu/">present in academia</a>, using links between text and emojis found in tweets on a large corpus of public data.
+        Additionally, other labs have worked on analysis of social feeds, including <a href="http://www.slate.com/blogs/future_tense/2016/02/24/facebook_s_5_new_reactions_buttons_are_all_about_data_data_data.html">Facebook</a>
+        and <a href="http://cs.ucsb.edu/~ravenben/publications/pdf/venmo-icwsm17.pdf">Venmo</a>. The latter looked at clustering payments
+        based on the type of user (frequent, niche, occassional users, business owners), by transaction type (entertainment, food, services, etc),
+        and by general trends based on a temporal scale. Applying an analysis like this into the individual scale might using patterns identified
+        from global and personal data can paint a vivid picture of who a person might be, exclusively from their Venmo history.
+        <br><br>
+        I was surprised by how similar the groupings identified by much larger scale clustering and deep learning were to the
+        filters I generated. It seems this data is very transparent on its own, and does not need too much power for one to draw
+        inferences. Applying analysis can be even richer when parsing location data (Uber to and from places, travel data, restaurant names)
+        and temporal patterns (monthly payments, weekly payments, etc), and finally when looking at transactions of businesses that are
+        made public.
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="section6">
+    <div class="section-content">
+      <div class="section-header">What can I do about this (and other privacy concerns)?</div>
+      <div class="section-header-small">Change Your Settings</div>
+      <div class="section-text">
+        Venmo has different controls in place for managing privacy settings. If you're interested, <a href="https://help.venmo.com/hc/en-us/articles/210413717-Payment-Activity-Privacy">this page</a>
+        has some useful information on how to do that- for individual payments, on the payment screen, one can choose
+        between <code3>Public</code3>, <code3>Friends</code3> and <code3>Participants Only</code3>. While these payments may
+        be private, they will still show up on your own feed. Regardless of where they are posted, the monetary amounts
+        are not disclosed to anyone but the participants of a transaction.
+        <br><br>
+        Venmo also has other instructions on changing all future transactions and all past transactions. The change these payment settings,
+        you can access either the Web app or the mobile app. Venmo
+        <a href="https://help.venmo.com/hc/en-us/articles/210413717-Payment-Activity-Privacy">provides</a>
+        the following instructions for web:<br><br>
+        <code4>Settings</code4><span class="glyphicon glyphicon-arrow-right"></span>
+        <code4>Privacy</code4><span class="glyphicon glyphicon-arrow-right"></span>
+        <code4>"Sharing"</code4><span class="glyphicon glyphicon-arrow-right"></span>
+        <code4>"Can share transactions involving me"</code4><span class="glyphicon glyphicon-arrow-right"></span>
+        <code4>"Only me"</code4>
+        <br><br>
+        <code4>Settings</code4><span class="glyphicon glyphicon-arrow-right"></span>
+        <code4>Privacy</code4><span class="glyphicon glyphicon-arrow-right"></span>
+        <code4>"Sharing"</code4><span class="glyphicon glyphicon-arrow-right"></span>
+        <code4>"Default audiences for future transactions"</code4><span class="glyphicon glyphicon-arrow-right"></span>
+        <code4>"Private"</code4><br><br><br>
+
+
+        Here is the flow Venmo provides for mobile -<br><br>
+        <code4>"☰"</code4><span class="glyphicon glyphicon-arrow-right"></span>
+        <code4>"Settings"</code4><span class="glyphicon glyphicon-arrow-right"></span>
+        <code4>"Privacy & Sharing" (iPhone) /  "Sharing" (Android)</code4><span class="glyphicon glyphicon-arrow-right"></span>
+        <code4>"Future Transactions (Default)" / "Default Audiences"</code4><span class="glyphicon glyphicon-arrow-right"></span>
+        <code4>"Participants Only"</code4><br><br>
+
+        <code4>"☰"</code4><span class="glyphicon glyphicon-arrow-right"></span>
+        <code4>"Settings"</code4><span class="glyphicon glyphicon-arrow-right"></span>
+        <code4>"Privacy & Sharing" (iPhone) /  "Sharing" (Android)</code4><span class="glyphicon glyphicon-arrow-right"></span>
+        <code4>"Who Can Share Transactions Involving You"/"Transactions Involving You"</code4><span class="glyphicon glyphicon-arrow-right"></span>
+        <code4>"Only Me"</code4><br><br><br>
+
+
+        Updating past settings is a separate process, and this can happen from the mobile app, too. However, changing your past history is
+        a permanent action and Venmo only supplies directions for how to complete this from iOS (does not include Android and Web in their page).
+        This is the flow to get there- <br><br>
+        <code4>"☰"</code4><span class="glyphicon glyphicon-arrow-right"></span>
+        <code4>"Settings"</code4><span class="glyphicon glyphicon-arrow-right"></span>
+        <code4>"Privacy & Sharing" (iPhone) /  "Sharing" (Android)</code4><span class="glyphicon glyphicon-arrow-right"></span>
+        <code4>"Past Transactions (Default)" / "Default Audiences"</code4><span class="glyphicon glyphicon-arrow-right"></span>
+        <code4>"Make All Private"</code4><br><br>
+
+        <img src="img/settings.png" id="settings">
+        These were the default settings that Venmo has on an account - it's worth checking to see if you do want these settings to remain
+        this way or not. Today, the default settings are more private which has been slightly disruptive to Venmo's projected business model.
+
+      </div>
+      <div class="section-header-small">Who might use this information?</div>
+      <div class="section-text">
+        Here are three snippets from Venmo's privacy policy <a href="https://venmo.com/legal/us-privacy-policy/">(here)</a>:<br>
+        <blockquote>
+          <p>Your contact information, date of sign-up, the number of payments you have received and other verification metrics like social graph activity may be provided to users or companies when you transact with, on, or through Venmo.</p>
+          <footer>HOW WE SHARE PERSONAL INFORMATION WITHIN THE VENMO NETWORK, <cite title="Source Title">Venmo Privacy Policy</cite></footer>
+        </blockquote>
+        <blockquote>
+          <p>Other third parties with your consent or at your direction to do so.</p>
+          <footer>HOW WE SHARE PERSONAL INFORMATION WITH OTHER PARTIES, <cite title="Source Title">Venmo Privacy Policy</cite></footer>
+        </blockquote>
+        <blockquote>
+          <p>Service providers under contract who help with parts of our business operations (for example, fraud prevention, payment processing, or technology services); Our contracts dictate that these service providers only use your information in connection with the services they perform for us and not for their own benefit.</p>
+          <footer>HOW WE SHARE PERSONAL INFORMATION WITH OTHER PARTIES, <cite title="Source Title">Venmo Privacy Policy</cite></footer>
+        </blockquote>
+        From this, it seems as though companies operating on Venmo can only benefit from information once you have an established history of
+        transactions with that company. If you have not shared your card information with them previously, they will not have access to it. Third parties
+        can access Venmo data but can only act on it to the extent that is required. Finally, Venmo mentions that this information can be shared
+        with other third parties with consent for profiteering. <br><br>
+        Venmo's business model is generally operating at a loss for a 2.9% transaction fee, but gaining money buy allowing Vendors to onboard to their
+        platform to access cards and bank accounts instead of cash or other modes of payment processing. This article indicates that PayPals COO, Bill Ready
+        is looking for growth to come from friends sharing information about their lives - if a restaurant is advertised by a payment they received, and that
+        payment is made public on someone's social feed, their friends may see it and want to go too<a href="https://www.theatlantic.com/business/archive/2017/07/venmo-makes-money-banks/533946/">[source]</a>.
+        If Venmo does decide to commit to this route of growth, they may consider changing the default visibility or finding other ways to introduce
+        information into the activity feed, where they can make the strongest case to vendors to onboard to them.
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="section7">
+    <div class="section-content">
+      <div class="section-header">Dialectical</div>
+      <div class="section-text">
+        When considering privacy in general, it is always worth considering how a service and how its data reach people,
+        and society at large. What is the value of this information, and to who? Who is this service serving? And how
+        will changes in this platform, and others around it shape its use of data in the future? Financial data has always
+        had a storied history of privacy in the US - people don't share their transaction histories or credit card bills with
+        others generally, but with platforms like this, it becomes second nature. Ultimately, does this all matter?
+      </div>
+      <div class="section-header-small">Does this matter?</div>
+      <div class="section-text">
+        Though users absolutely do have the agency to change their settings, <a href="https://www0.gsb.columbia.edu/mygsb/faculty/research/pubfiles/1173/defaults_framing_and_privacy.pdf">most do not.</a> Transactions are generated one at a time,
+        not all at once, and when users input data this way, it is more difficult to think about the big picture that these transactions
+        can aggregate to form. The composition that a Venmo transaction feed generates is a rich and revealing data story that can
+        prepare strong inferences for people who (1) transparently label their transactions, and/or (2) make their transactions public.
+        Even without descriptive transaction labels, the frequency of Venmo payments can be indicative of where people are, and who
+        they interact with. A mosaic of Venmo transactions together can build profiles of people who are not even the target of a
+        search, and the result is much greater than the sum of its parts. Check out your own Venmo feed - do you intend to share the
+        information that might surface when you aggregate your transactions rather than view them as insular independent events?
+        Would you naturally share who you live with? When a network is constructed around you, your privacy might be as vulnerable
+        as your network's weakest link.<br><br>
+        Even if you are taking care of your privacy settings, platforms like Venmo are not airtight. Research from <a href="https://courses.csail.mit.edu/6.857/2014/files/13-benkraft-jmoldow-mannes-venmo.pdf">
+        this</a> paper, a security analysis of Venmo, reveals that data restricted to the scope of friends may sometimes have been
+        publicly leaked because of Venmo's API implementation, which only depends on providing a valid payment ID, regardless of the
+        sharing scope attached to it. Venmo also automatically <a href="http://cs.ucsb.edu/~ravenben/publications/pdf/venmo-icwsm17.pdf">imports your Facebook friends</a>
+        so even if your sharing settings are restricted, they might not be to the audience you constructed by choice when entering the
+        platform.
+      </a>
+      </div>
+      <div class="section-header-small">Who's data is it anyways?</div>
+      <div class="section-text">
+        Questions of how Venmo and other companies in the payments space may be affected are arising because of GDPR and
+        the
+        <a href="https://ec.europa.eu/digital-single-market/en/boosting-e-commerce-eu">EU's e-commerce directive</a>
+        to add stronger protections for consumers from the payments industry. As long as Venmo
+        continues the practice of getting informed consent for the sharing of data, and provides a way for
+        users to see their data and have control over it, they are compliant. Increasing consumer trust is a key point in the
+        directive, so if Venmo is able to aggregate consumer data for them to see, it may influence their choice in privacy settings
+        and how they use the platform in general. This awareness can protect people from unintended exposures of information.
+        <a href="https://onetrust.com/can-payments-companies-monetize-data-still-comply-gdpr/">[source]</a>.
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-content">
+      <div class="section-header">Resources and Further Reading</div>
+      <div class="section-text">
+        <ul>
+          <li><a href="http://internet.gawker.com/heres-the-number-one-reason-to-set-your-venmo-account-t-1687461730">Here's the number one reason to set your Venmo account to private (Gawker)</a></li>
+          <li><a href="https://help.venmo.com/hc/en-us/articles/210413717-Payment-Activity-Privacy">Payment and Privacy Settings (Venmo)</a></li>
+          <li><a href="https://venmo.com/legal/us-privacy-policy/">Venmo Privacy Policy</a></li>
+          <li><a href="https://www.theatlantic.com/business/archive/2017/07/venmo-makes-money-banks/533946/">How in the world does Venmo make money? (The Atlantic)</a></li>
+          <li><a href="https://techscience.org/a/2015102901/">Venmo’ed: Sharing Your Payment Data With the World</a></li>
+          <li><a href="https://www.investopedia.com/articles/personal-finance/010715/venmo-its-business-model-and-competition.asp">Venmo's Business Model</a></li>
+          <li><a href="https://ec.europa.eu/digital-single-market/en/boosting-e-commerce-eu">EU E-Commerce Directive</a></li>
+          <li><a href="https://onetrust.com/can-payments-companies-monetize-data-still-comply-gdpr/">Can Payments Companies Monetize Data and Still Comply with GDPR?</a></li>
+          <li><a href="http://www.vicemo.com/">Vicemo</a></li>
+          <li><a href="https://courses.csail.mit.edu/6.857/2014/files/13-benkraft-jmoldow-mannes-venmo.pdf">Security Research of a Social Payment App</a></li>
+          <li><a href="http://cs.ucsb.edu/~ravenben/publications/pdf/venmo-icwsm17.pdf">Cold Hard E-Cash: Friends and Vendors in the Venmo Digital Payments System</a></li>
+        </ul>
+
+      </div>
+    </div>
+  </div>
+
+  <!--</div>-->
+
+  <!-- Load JS libraries -->
+  <script src="js/jquery.min.js"></script>
+  <script src="js/jQueryEmoji.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script src="js/d3.min.js"></script>
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <!-- Load data, create visualizations -->
+  <script src="js/main.js"></script>
+  <script src="js/jquery.easy-ticker.js"></script>
+
+
+
+
+
+</body>
+</html>
